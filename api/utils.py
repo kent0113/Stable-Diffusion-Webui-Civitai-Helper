@@ -14,7 +14,7 @@ def group_by_model_type(models: list[Model]) -> tuple[dict, dict]:
 
     for model in models:
         model_type = model.model_type
-        if model_type is None:
+        if model_type != "TextualInversion" and model_type != "Hypernetwork" and model_type != "Checkpoint" and model_type != "LORA":
             model_group["others"].append(model)
         else:
             model_group[model_type].append(model)
