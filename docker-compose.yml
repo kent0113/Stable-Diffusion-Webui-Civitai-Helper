@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  webui-model-helper:
+    image: webui-model-helper:snapshot
+    container_name: webui-model-helper
+    environment:
+      MODEL_BASE_PATH: "/app/models"
+    ports:
+      - "8081:80"
+    restart: on-failure
+    volumes:
+      - /Users/bytedance/Dev/aweminds/graviti-stable-diffusion-webui/models:/app/models
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
