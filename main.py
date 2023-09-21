@@ -12,6 +12,7 @@ class ModelVersionQueryParam(BaseModel):
     delay_second: int | None
     max_size_preview: bool | None
     skip_nsfw_preview: bool | None
+    snapshot_code: str | None
 
 
 class ModelResponse:
@@ -47,6 +48,13 @@ async def check_version(query_param: ModelVersionQueryParam):
     model_snapshot_list = civitai_helper_api.get_new_model_version(model_types)
 
     return model_snapshot_list
+
+
+@app.post("/api/models/upgrade")
+async def upgrade_model(query_param: ModelVersionQueryParam):
+    snapshot_code = query_param.snapshot_code
+
+    return {"status": "success", "snapshot": snapshot_code}
 
 
 @app.post("/api/model/check_version")
