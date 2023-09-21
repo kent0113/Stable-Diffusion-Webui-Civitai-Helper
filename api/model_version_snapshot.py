@@ -10,5 +10,4 @@ class ModelVersionSnapshot:
         self.code = ''.join(random.sample(string.ascii_letters + string.digits, 8))
         self.time = time
         self.count = count
-        model_group, _size = utils.group_by_model_type(models)
-        self.models = model_group
+        self.models = models

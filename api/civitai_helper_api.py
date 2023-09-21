@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import datetime
 
 import scripts.ch_lib.model as model
@@ -8,6 +9,7 @@ from api.model_version import ModelVersion
 from api.model_version_snapshot import ModelVersionSnapshot
 from scripts.ch_lib import civitai
 from scripts.ch_lib import util
+from scripts.ch_lib import downloader
 
 root_path = os.getenv('MODEL_BASE_PATH')
 
@@ -133,10 +135,69 @@ def check_models_new_version(model_type: list, delay_second: int) -> list:
                                              description, download_url, img_url)
 
             _model = Model(new_model_version, model_path)
-            # an9.civitai.info
             _models.append(_model)
 
     snapshot = ModelVersionSnapshot(datetime.now().strftime("%Y-%m-%d, %H:%M:%S"), len(_models), _models)
     model_version_snapshot_list.insert(0, snapshot)
 
     return _models
+
+
+def upgrade_models(snapshot_code: str) -> tuple[bool, list]:
+    new_model_paths = []
+
+    snapshot = None
+    for _snapshot in model_version_snapshot_list:
+        if _snapshot.code == snapshot_code:
+            snapshot = _snapshot
+
+    if snapshot is None:
+        return False, new_model_paths
+
+    for _model in snapshot.models:
+        new_version = _model.new_version
+        if not new_version:
+            continue
+        url = new_version.download_url
+        model_type = _model.model_type
+
+        if model_type != "TextualInversion" and model_type != "Hypernetwork" and model_type != "Checkpoint" and model_type != "LORA":
+            model_type = "Checkpoint"
+
+        folder = model.folders[utils.model_type_mapping[model_type]]
+
+        old_version_path = _model.model_path
+        delete_file(old_version_path)
+
+        downloader_dl = downloader.dl(url, folder, None, None)
+        new_model_paths.append(downloader_dl)
+
+    return True, new_model_paths
+
+
+def delete_file(file_path: str) -> bool:
+    png_file_path = utils.get_file_path(file_path, utils.png_ext)
+    preview_png_file_path = utils.get_file_path(file_path, utils.preview_ext)
+    info_path = utils.get_file_path(file_path, civitai.suffix + civitai.model.info_ext)
+
+    if os.path.exists(file_path):
+        util.printD("Deleting model from: " + file_path)
+        os.remove(file_path)
+        util.printD("Deleted model from: " + file_path)
+
+    if os.path.exists(info_path):
+        util.printD("Deleting info file from: " + info_path)
+        os.remove(info_path)
+        util.printD("Deleted info file from: " + info_path)
+
+    if os.path.exists(png_file_path):
+        util.printD("Deleting png from: " + png_file_path)
+        os.remove(png_file_path)
+        util.printD("Deleted png from: " + png_file_path)
+
+    if os.path.exists(preview_png_file_path):
+        util.printD("Deleting preview png from: " + preview_png_file_path)
+        os.remove(preview_png_file_path)
+        util.printD("Deleted preview png from: " + preview_png_file_path)
+
+    return True
