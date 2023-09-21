@@ -1,9 +1,11 @@
 import os
-import time
+from datetime import datetime
 
 import scripts.ch_lib.model as model
+from api import utils
 from api.model import Model
 from api.model_version import ModelVersion
+from api.model_version_snapshot import ModelVersionSnapshot
 from scripts.ch_lib import civitai
 from scripts.ch_lib import util
 
@@ -15,6 +17,8 @@ model.folders = {
     "ckp": os.path.join(root_path, "public", "Stable-diffusion"),
     "lora": os.path.join(root_path, "public", "Lora"),
 }
+
+model_version_snapshot_list = []
 
 
 def scan_models(scan_model_types: list, max_size_preview: bool, skip_nsfw_preview: bool):
@@ -110,6 +114,10 @@ def scan_models(scan_model_types: list, max_size_preview: bool, skip_nsfw_previe
 #     model_action_civitai.scan_model(model_type, download_max_size_preview, skip_nsfw_preview)
 
 
+def get_new_model_version(model_type: list):
+    return model_version_snapshot_list
+
+
 def check_models_new_version(model_type: list, delay_second: int) -> list:
     new_versions = civitai.check_models_new_version_by_model_types(model_type, delay_second)
 
@@ -127,5 +135,8 @@ def check_models_new_version(model_type: list, delay_second: int) -> list:
             _model = Model(new_model_version, model_path)
             # an9.civitai.info
             _models.append(_model)
+
+    snapshot = ModelVersionSnapshot(datetime.now().strftime("%Y-%m-%d, %H:%M:%S"), len(_models), _models)
+    model_version_snapshot_list.insert(0, snapshot)
 
     return _models

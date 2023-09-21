@@ -1,5 +1,3 @@
-from typing import Any
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -40,6 +38,15 @@ async def scan_models(query_param: ModelVersionQueryParam):
     model_group, sizes = utils.group_by_model_type(models)
     # return models
     return {"sizes": sizes, "models": model_group}
+
+
+@app.post("/api/models/new_version")
+async def check_version(query_param: ModelVersionQueryParam):
+    model_types = query_param.model_types
+
+    model_snapshot_list = civitai_helper_api.get_new_model_version(model_types)
+
+    return model_snapshot_list
 
 
 @app.post("/api/model/check_version")
