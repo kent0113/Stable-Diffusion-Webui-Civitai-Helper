@@ -44,10 +44,8 @@ async def scan_models(query_param: ModelVersionQueryParam):
 
 
 @app.post("/api/models/new_version")
-async def get_model_new_version(query_param: ModelVersionQueryParam):
-    model_types = query_param.model_types
-
-    model_snapshot_list = civitai_helper_api.get_new_model_version(model_types)
+async def get_model_new_version():
+    model_snapshot_list = civitai_helper_api.get_new_model_version()
     _model_snapshot_list = copy.deepcopy(model_snapshot_list)
     for snapshot in _model_snapshot_list:
         model_group, size = utils.group_by_model_type(snapshot.models)

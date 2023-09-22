@@ -116,7 +116,7 @@ def scan_models(scan_model_types: list, max_size_preview: bool, skip_nsfw_previe
 #     model_action_civitai.scan_model(model_type, download_max_size_preview, skip_nsfw_preview)
 
 
-def get_new_model_version(model_type: list):
+def get_new_model_version():
     return model_version_snapshot_list
 
 
@@ -127,6 +127,7 @@ def check_models_new_version(model_type: list, delay_second: int) -> list:
 
     if not new_versions:
         print("No model has new version")
+        return _models
     else:
         for new_version in new_versions:
             model_path, model_id, model_name, new_version_id, new_version_name, description, download_url, img_url = new_version
@@ -161,6 +162,7 @@ def upgrade_models(snapshot_code: str, model_types: list) -> tuple[bool, list]:
         new_version = _model.new_version
         if not new_version:
             continue
+        print(f"--------upgrading:{_model.model_path}-----------")
         url = new_version.download_url
         folder = model.folders[_model.model_type_abbr]
 
