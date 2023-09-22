@@ -59,7 +59,8 @@ async def get_model_new_version(query_param: ModelVersionQueryParam):
 @app.post("/api/models/upgrade")
 async def upgrade_model(query_param: ModelVersionQueryParam):
     snapshot_code = query_param.snapshot_code
-    result, model_paths = civitai_helper_api.upgrade_models(snapshot_code)
+    model_types = query_param.model_types
+    result, model_paths = civitai_helper_api.upgrade_models(snapshot_code, model_types)
 
     return {"status": result, "snapshot": snapshot_code, "models": model_paths}
 

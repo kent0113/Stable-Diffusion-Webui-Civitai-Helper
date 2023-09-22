@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime
 
 import scripts.ch_lib.model as model
 from api import utils
@@ -18,6 +17,7 @@ model.folders = {
     "hyper": os.path.join(root_path, "public", "hypernetworks"),
     "ckp": os.path.join(root_path, "public", "Stable-diffusion"),
     "lora": os.path.join(root_path, "public", "Lora"),
+    "others": os.path.join(root_path, "public", "Lora")
 }
 
 model_version_snapshot_list = []
@@ -137,13 +137,13 @@ def check_models_new_version(model_type: list, delay_second: int) -> list:
             _model = Model(new_model_version, model_path)
             _models.append(_model)
 
-    snapshot = ModelVersionSnapshot(datetime.now().strftime("%Y-%m-%d, %H:%M:%S"), len(_models), _models)
+    snapshot = ModelVersionSnapshot(_models)
     model_version_snapshot_list.insert(0, snapshot)
 
     return _models
 
 
-def upgrade_models(snapshot_code: str) -> tuple[bool, list]:
+def upgrade_models(snapshot_code: str, model_types: list) -> tuple[bool, list]:
     new_model_paths = []
 
     snapshot = None
@@ -155,16 +155,14 @@ def upgrade_models(snapshot_code: str) -> tuple[bool, list]:
         return False, new_model_paths
 
     for _model in snapshot.models:
+        if _model.model_type_abbr not in model_types:
+            continue
+
         new_version = _model.new_version
         if not new_version:
             continue
         url = new_version.download_url
-        model_type = _model.model_type
-
-        if model_type != "TextualInversion" and model_type != "Hypernetwork" and model_type != "Checkpoint" and model_type != "LORA":
-            model_type = "Checkpoint"
-
-        folder = model.folders[utils.model_type_mapping[model_type]]
+        folder = model.folders[_model.model_type_abbr]
 
         old_version_path = _model.model_path
         delete_file(old_version_path)

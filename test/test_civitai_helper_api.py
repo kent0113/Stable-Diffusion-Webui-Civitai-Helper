@@ -1,7 +1,6 @@
-import os
 from unittest import TestCase
+
 from api import civitai_helper_api
-from scripts.ch_lib import model
 
 
 class Test(TestCase):
@@ -26,16 +25,13 @@ class Test(TestCase):
             assert model_version.new_version.download_url is not None
         assert len(model_versions) == 2
 
-    def test(self):
-        root_path = "/Users/bytedance/Dev/aweminds/graviti-stable-diffusion-webui/models"
-        model.folders = {
-            "ti": os.path.join(root_path, "public", "embeddings"),
-            "hyper": os.path.join(root_path, "public", "hypernetworks"),
-            "ckp": os.path.join(root_path, "public", "Stable-diffusion"),
-            "lora": os.path.join(root_path, "public", "Lora"),
-        }
+    def test_upgrade_models(self):
+        model_types = [
+            "hyper",
+            "ckp"
+        ]
+        result1 = "ti" in model_types
+        result2 = "hyper" in model_types
 
-        name = model.load_model_info(
-            "/Users/bytedance/Dev/aweminds/graviti-stable-diffusion-webui/models/public/embeddings/an9.civitai.info")
-        print("------")
-        print(name)
+        assert result1 is False
+        assert result2 is True

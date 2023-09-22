@@ -1,5 +1,6 @@
 import os
 
+from api import utils
 from api.model_version import ModelVersion
 from scripts.ch_lib import civitai
 from scripts.ch_lib import model
@@ -11,6 +12,7 @@ class Model:
         self.model_id = None
         self.model_name = None
         self.model_type = None
+        self.model_type_abbr = None
         self.base_model = None
         self.version_name = None
         self.model_file_name = None
@@ -28,6 +30,8 @@ class Model:
 
         model_info_dict = model.load_model_info(info_file_path)
         if model_info_dict.get("modelId") is None:
+            # 如果info文件内容为空，则设置为others
+            self.model_type_abbr = "others"
             return
 
         self.model_id = model_info_dict.get("modelId")
@@ -35,6 +39,8 @@ class Model:
         self.create_at = model_info_dict.get("createdAt")
         self.model_name = model_info_dict.get("model").get("name")
         self.model_type = model_info_dict.get("model").get("type")
+        type_ = utils.model_type_mapping[self.model_type]
+        self.model_type_abbr = type_ if type_ else "others"
         self.base_model = model_info_dict.get("baseModel")
         self.download_url = model_info_dict.get("downloadUrl")
         self.model_file_name = model_info_dict.get("files")[0].get("name")

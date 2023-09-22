@@ -10,6 +10,6 @@ services:
       - "8081:80"
     restart: on-failure
     volumes:
-      - /Users/bytedance/Dev/aweminds/graviti-stable-diffusion-webui/models:/app/models
+      - /stable-diffusion-webui/models:/app/models
       - /etc/timezone:/etc/timezone
       - /etc/localtime:/etc/localtime

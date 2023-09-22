@@ -6,7 +6,7 @@ class TestModelVersion(TestCase):
 
     def test_load_model_info(self):
         model_version = Model(None,
-                                     "/Users/bytedance/Dev/aweminds/graviti-stable-diffusion-webui/models/public/embeddings/an9.pt")
+                              "DEMO")
         # model_version.load_model_info()
 
         assert model_version.model_id is not None

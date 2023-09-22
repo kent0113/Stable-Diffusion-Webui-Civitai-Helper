@@ -8,7 +8,8 @@ model_type_mapping = {
     "TextualInversion": "ti",
     "Hypernetwork": "hyper",
     "Checkpoint": "ckp",
-    "LORA": "lora"
+    "LORA": "lora",
+    "LoCon": "lora"
 }
 
 png_ext = ".png"
@@ -17,26 +18,23 @@ preview_ext = ".preview.png"
 
 def group_by_model_type(models: list[Model]) -> tuple[dict, dict]:
     model_group = {
-        "TextualInversion": [],
-        "Hypernetwork": [],
-        "Checkpoint": [],
-        "LORA": [],
+        "ti": [],
+        "hyper": [],
+        "ckp": [],
+        "lora": [],
         "others": []
     }
 
     for model in models:
-        model_type = model.model_type
-        if model_type != "TextualInversion" and model_type != "Hypernetwork" and model_type != "Checkpoint" and model_type != "LORA":
-            model_group["others"].append(model)
-        else:
-            model_group[model_type].append(model)
+        model_type = model.model_type_abbr
+        model_group[model_type].append(model)
 
     sizes = {
         "totel": len(models),
-        "ti": len(model_group["TextualInversion"]),
-        "hyper": len(model_group["Hypernetwork"]),
-        "ckp": len(model_group["Checkpoint"]),
-        "lora": len(model_group["LORA"]),
+        "ti": len(model_group["ti"]),
+        "hyper": len(model_group["hyper"]),
+        "ckp": len(model_group["ckp"]),
+        "lora": len(model_group["lora"]),
         "others": len(model_group["others"]),
     }
 
