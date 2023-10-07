@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 from api import utils
 from scripts.ch_lib import civitai
@@ -16,3 +17,7 @@ class Test(TestCase):
         print(png_path)
         print(preview_png_path)
 
+    def test_get_model_folder_path(self):
+        model_path = "/stable-diffusion-webui/models/public/Lora/SDXL/edgMamaLuba_DollLikeness.safetensors"
+        folder = os.path.dirname(model_path)
+        assert folder == "/stable-diffusion-webui/models/public/Lora/SDXL"

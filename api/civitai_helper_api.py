@@ -13,11 +13,11 @@ from scripts.ch_lib import downloader
 root_path = os.getenv('MODEL_BASE_PATH')
 
 model.folders = {
-    "ti": os.path.join(root_path, "public", "embeddings"),
-    "hyper": os.path.join(root_path, "public", "hypernetworks"),
-    "ckp": os.path.join(root_path, "public", "Stable-diffusion"),
-    "lora": os.path.join(root_path, "public", "Lora"),
-    "others": os.path.join(root_path, "public", "Lora")
+    "ti": os.path.join(root_path, "embeddings"),
+    "hyper": os.path.join(root_path, "models", "public", "hypernetworks"),
+    "ckp": os.path.join(root_path, "models", "public", "Stable-diffusion"),
+    "lora": os.path.join(root_path, "models", "public", "Lora"),
+    "others": os.path.join(root_path, "models", "public", "Lora")
 }
 
 model_version_snapshot_list = []
@@ -164,12 +164,13 @@ def upgrade_models(snapshot_code: str, model_types: list) -> tuple[bool, list]:
             continue
         print(f"--------upgrading:{_model.model_path}-----------")
         url = new_version.download_url
-        folder = model.folders[_model.model_type_abbr]
+        model_folder = os.path.dirname(_model.model_path)
+        # folder = model.folders[_model.model_type_abbr]
 
         old_version_path = _model.model_path
         delete_file(old_version_path)
 
-        downloader_dl = downloader.dl(url, folder, None, None)
+        downloader_dl = downloader.dl(url, model_folder, None, None)
         new_model_paths.append(downloader_dl)
 
     return True, new_model_paths
@@ -181,22 +182,18 @@ def delete_file(file_path: str) -> bool:
     info_path = utils.get_file_path(file_path, civitai.suffix + civitai.model.info_ext)
 
     if os.path.exists(file_path):
-        util.printD("Deleting model from: " + file_path)
         os.remove(file_path)
         util.printD("Deleted model from: " + file_path)
 
     if os.path.exists(info_path):
-        util.printD("Deleting info file from: " + info_path)
         os.remove(info_path)
         util.printD("Deleted info file from: " + info_path)
 
     if os.path.exists(png_file_path):
-        util.printD("Deleting png from: " + png_file_path)
         os.remove(png_file_path)
         util.printD("Deleted png from: " + png_file_path)
 
     if os.path.exists(preview_png_file_path):
-        util.printD("Deleting preview png from: " + preview_png_file_path)
         os.remove(preview_png_file_path)
         util.printD("Deleted preview png from: " + preview_png_file_path)
 
