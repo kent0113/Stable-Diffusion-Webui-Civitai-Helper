@@ -41,7 +41,8 @@ def dl(url, folder, filename, filepath):
     if not file_path:
         filename = ""
         if "Content-Disposition" in rh.headers.keys():
-            cd = rh.headers["Content-Disposition"]
+            # headers default is decoded with latin1, so need to re-decode it with utf-8
+            cd = rh.headers["Content-Disposition"].encode('latin1').decode('utf-8', errors='ignore')
             # Extract the filename from the header
             # content of a CD: "attachment;filename=FileName.txt"
             # in case "" is in CD filename's start and end, need to strip them out
@@ -108,6 +109,12 @@ def dl(url, folder, filename, filepath):
                 sys.stdout.flush()
 
     print()
+
+    # check file size
+    downloaded_size = os.path.getsize(dl_file_path)
+    if downloaded_size < total_size:
+        util.printD(f"Download failed due to insufficient file size. Try again later or download it manually: {url}")
+        return
 
     # rename file
     os.rename(dl_file_path, file_path)
