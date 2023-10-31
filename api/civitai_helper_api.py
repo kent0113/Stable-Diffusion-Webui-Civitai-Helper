@@ -163,15 +163,19 @@ def upgrade_models(snapshot_code: str, model_types: list) -> tuple[bool, list]:
         if not new_version:
             continue
         print(f"--------upgrading:{_model.model_path}-----------")
-        url = new_version.download_url
-        model_folder = os.path.dirname(_model.model_path)
-        # folder = model.folders[_model.model_type_abbr]
+        try:
+            url = new_version.download_url
+            model_folder = os.path.dirname(_model.model_path)
+            # folder = model.folders[_model.model_type_abbr]
 
-        old_version_path = _model.model_path
-        delete_file(old_version_path)
+            downloader_dl = downloader.dl(url, model_folder, None, None)
+            new_model_paths.append(downloader_dl)
 
-        downloader_dl = downloader.dl(url, model_folder, None, None)
-        new_model_paths.append(downloader_dl)
+            old_version_path = _model.model_path
+            delete_file(old_version_path)
+        except RuntimeError as err:
+            util.printD(f"Error when upgrading {_model.model_path}")
+            print(err)
 
     return True, new_model_paths
 
