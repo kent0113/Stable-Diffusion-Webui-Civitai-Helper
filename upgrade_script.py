@@ -1,8 +1,21 @@
+import os
+
+import dotenv
+
 from api import civitai_helper_api
 from scripts.ch_lib import util
 
+dotenv.load_dotenv()
+
 
 def main():
+    civitai_api_key = os.getenv('CIVITAI_API_KEY')
+    util.civitai_api_key = civitai_api_key
+    util.def_headers["Authorization"] = f"Bearer {civitai_api_key}"
+
+    print("###############   init   ################ ")
+    print(f"has_api_key: {True if civitai_api_key else False}")
+
     model_types = [
         "ti",
         "hyper",
