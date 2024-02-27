@@ -48,6 +48,7 @@ model_version_snapshot_list = []
 
 def scan_models(scan_model_types: list, max_size_preview: bool, skip_nsfw_preview: bool):
     util.printD("Start scan_model")
+    util.printD(f"Scan from: {model.folders}")
     output = ""
 
     # check model types
