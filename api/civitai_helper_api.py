@@ -11,14 +11,37 @@ from scripts.ch_lib import util
 from scripts.ch_lib import downloader
 
 root_path = os.getenv('MODEL_BASE_PATH')
+embeddings_path = os.getenv('EMBEDDINGS_PATH')
+hypernetworks_path = os.getenv('HYPERNETWORKS_PATH')
+stable_diffusion_path = os.getenv('STABLE_DIFFUSION_PATH')
+lora_path = os.getenv('LORA_PATH')
+others_path = os.getenv('OTHERS_PATH')
 
-model.folders = {
-    "ti": os.path.join(root_path, "embeddings"),
-    "hyper": os.path.join(root_path, "models", "public", "hypernetworks"),
-    "ckp": os.path.join(root_path, "models", "public", "Stable-diffusion"),
-    "lora": os.path.join(root_path, "models", "public", "Lora"),
-    "others": os.path.join(root_path, "models", "public", "Lora")
-}
+model.folders = {}
+
+if len(embeddings_path) != 0:
+    model.folders['ti'] = embeddings_path
+
+if len(hypernetworks_path) != 0:
+    model.folders['hyper'] = hypernetworks_path
+
+if len(stable_diffusion_path) != 0:
+    model.folders['ckp'] = stable_diffusion_path
+
+if len(lora_path) != 0:
+    model.folders['lora'] = lora_path
+
+if len(others_path) != 0:
+    model.folders['others'] = others_path
+
+if len(root_path) != 0:
+    model.folders = {
+        "ti": os.path.join(root_path, "embeddings"),
+        "hyper": os.path.join(root_path, "models", "public", "hypernetworks"),
+        "ckp": os.path.join(root_path, "models", "public", "Stable-diffusion"),
+        "lora": os.path.join(root_path, "models", "public", "Lora"),
+        "others": os.path.join(root_path, "models", "public", "Lora")
+    }
 
 model_version_snapshot_list = []
 
